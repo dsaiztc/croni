@@ -66,10 +66,13 @@ func runAdd(cmd *cobra.Command, args []string) error {
 		}
 		sched = types.Schedule{Type: types.ScheduleEvery, Expression: every}
 	case at != "":
-		if _, err := launchd.ParseAt(at); err != nil {
+		resolved, err := launchd.ParseAt(at)
+		if err != nil {
 			return err
 		}
-		sched = types.Schedule{Type: types.ScheduleAt, Expression: at}
+		// Store as absolute RFC3339 so subsequent ParseAt calls (list, plist
+		// regeneration) always return the same fixed time, not time.Now()+offset.
+		sched = types.Schedule{Type: types.ScheduleAt, Expression: resolved.Format(time.RFC3339)}
 	}
 
 	command, _ := cmd.Flags().GetString("command")
