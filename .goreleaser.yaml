@@ -1,0 +1,44 @@
+version: 2
+
+project_name: croni
+
+builds:
+  - main: .
+    binary: croni
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      - -X github.com/dsaiztc/croni/cmd.version={{.Version}}
+      - -X github.com/dsaiztc/croni/cmd.commit={{.ShortCommit}}
+      - -X github.com/dsaiztc/croni/cmd.date={{.Date}}
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: checksums.txt
+
+brews:
+  - repository:
+      owner: dsaiztc
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: https://github.com/dsaiztc/croni
+    description: "croni — A friendly CLI for managing scheduled jobs on macOS"
+    install: |
+      bin.install "croni"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"

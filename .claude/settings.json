@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go build *)",
+      "Bash(go test *)",
+      "Bash(go vet *)",
+      "Bash(go mod *)",
+      "Bash(go get *)",
+      "Bash(make build)",
+      "Bash(make test)",
+      "Bash(make vet)",
+      "Bash(make clean)",
+      "Bash(./bin/croni *)",
+      "Bash(./croni *)",
+      "Bash(git tag *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(gh release *)",
+      "Bash(gh run *)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "cd /Users/dsaiztc/src/github.com/dsaiztc/croni && go vet ./... && go test ./... && go build -o bin/croni .",
+        "description": "Verify vet, tests, and build pass before stopping"
+      }
+    ]
+  }
+}
