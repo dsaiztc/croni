@@ -46,22 +46,10 @@ After any change, run `make build && make test` to verify.
 - **JSON tags**: use snake_case (see types/job.go).
 - **Cron OR semantics**: when both day-of-month and day-of-week are set, expand to two separate CalendarInterval sets (cron OR behavior vs launchd AND behavior).
 
-## Release Workflow
+## Docs
 
-1. Ensure `make vet` and `make test` pass
-2. Commit all changes and push to main
-3. Tag the release: `git tag vX.Y.Z`
-4. Push the tag: `git push origin vX.Y.Z`
-5. Wait for the GitHub Actions workflow to complete (builds binaries, updates Homebrew tap)
-6. Edit the release notes: `gh release edit vX.Y.Z --notes "..."`
+- [`docs/releasing.md`](docs/releasing.md) — read before cutting a release.
 
-## Release Notes Format
+## Releasing
 
-Follow [Keep a Changelog](https://keepachangelog.com/) conventions. Start with a one-line summary, then use `###` sections as applicable:
-
-- **Added** — new features
-- **Changed** — changes to existing functionality
-- **Fixed** — bug fixes
-- **Removed** — features that were removed
-
-Only include sections that apply to the release.
+Update the README and any user-facing docs to match the release **before** tagging. Full checklist in [`docs/releasing.md`](docs/releasing.md).
