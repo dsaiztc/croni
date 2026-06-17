@@ -22,9 +22,13 @@
   "hooks": {
     "Stop": [
       {
-        "type": "command",
-        "command": "cd /Users/dsaiztc/src/github.com/dsaiztc/croni && go vet ./... && go test ./... && go install .",
-        "description": "Verify vet, tests, and install to GOPATH/bin before stopping"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/dsaiztc/src/github.com/dsaiztc/croni && go vet ./... && go test ./... && go install .",
+            "description": "Verify vet, tests, and install to GOPATH/bin before stopping"
+          }
+        ]
       }
     ]
   }
