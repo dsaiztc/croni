@@ -142,3 +142,15 @@ func (s *Store) Remove(name string) error {
 		return nil
 	})
 }
+
+func (s *Store) RemoveMany(names []string) error {
+	if len(names) == 0 {
+		return nil
+	}
+	return s.withLock(func(st *types.Store) error {
+		for _, name := range names {
+			delete(st.Jobs, name)
+		}
+		return nil
+	})
+}

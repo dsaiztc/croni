@@ -103,6 +103,8 @@ croni add job --at 20m --command "..."                   # In 20 minutes
 croni add job --at "2026-05-13T15:00" --command "..."    # At specific time
 ```
 
+> **Note:** If the machine is asleep when the scheduled time passes, the job will not execute retroactively. Expired one-shot jobs are cleaned up automatically on the next `croni list`.
+
 ## Flags
 
 ### `croni add` flags

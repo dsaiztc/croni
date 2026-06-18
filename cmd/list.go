@@ -33,6 +33,8 @@ func runList(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	reapExpiredAtJobs(s)
+
 	jobs, err := s.List()
 	if err != nil {
 		return err
