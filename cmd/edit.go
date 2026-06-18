@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	cronpkg "github.com/dsaiztc/croni/internal/cron"
 	"github.com/dsaiztc/croni/internal/launchd"
 	"github.com/dsaiztc/croni/internal/store"
 	"github.com/dsaiztc/croni/internal/types"
@@ -73,6 +74,9 @@ func runEdit(cmd *cobra.Command, args []string) error {
 	}
 
 	if cmd.Flags().Changed("cron") {
+		if _, err := cronpkg.Expand(cronExpr); err != nil {
+			return err
+		}
 		job.Schedule = types.Schedule{Type: types.ScheduleCron, Expression: cronExpr}
 		changed = true
 	} else if cmd.Flags().Changed("every") {
@@ -82,10 +86,11 @@ func runEdit(cmd *cobra.Command, args []string) error {
 		job.Schedule = types.Schedule{Type: types.ScheduleEvery, Expression: every}
 		changed = true
 	} else if cmd.Flags().Changed("at") {
-		if _, err := launchd.ParseAt(at); err != nil {
+		resolved, err := launchd.ParseAt(at)
+		if err != nil {
 			return err
 		}
-		job.Schedule = types.Schedule{Type: types.ScheduleAt, Expression: at}
+		job.Schedule = types.Schedule{Type: types.ScheduleAt, Expression: resolved.Format(time.RFC3339)}
 		changed = true
 	}
 

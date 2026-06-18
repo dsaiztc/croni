@@ -3,10 +3,12 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
 
+	cronpkg "github.com/dsaiztc/croni/internal/cron"
 	"github.com/dsaiztc/croni/internal/launchd"
 	"github.com/dsaiztc/croni/internal/store"
 	"github.com/dsaiztc/croni/internal/types"
@@ -59,6 +61,9 @@ func runAdd(cmd *cobra.Command, args []string) error {
 	var sched types.Schedule
 	switch {
 	case cronExpr != "":
+		if _, err := cronpkg.Expand(cronExpr); err != nil {
+			return err
+		}
 		sched = types.Schedule{Type: types.ScheduleCron, Expression: cronExpr}
 	case every != "":
 		if _, err := launchd.ParseInterval(every); err != nil {
@@ -70,8 +75,6 @@ func runAdd(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		// Store as absolute RFC3339 so subsequent ParseAt calls (list, plist
-		// regeneration) always return the same fixed time, not time.Now()+offset.
 		sched = types.Schedule{Type: types.ScheduleAt, Expression: resolved.Format(time.RFC3339)}
 	}
 
@@ -84,12 +87,11 @@ func runAdd(cmd *cobra.Command, args []string) error {
 	envSlice, _ := cmd.Flags().GetStringArray("env")
 	env := make(map[string]string)
 	for _, e := range envSlice {
-		for i := range e {
-			if e[i] == '=' {
-				env[e[:i]] = e[i+1:]
-				break
-			}
+		k, v, ok := strings.Cut(e, "=")
+		if !ok {
+			return fmt.Errorf("invalid --env %q: must be KEY=VALUE", e)
 		}
+		env[k] = v
 	}
 
 	description, _ := cmd.Flags().GetString("description")
